@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Murder Mystery: Crime Scene Investigations</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #ecf0f1;
+            padding: 20px;
+        }
+
+        /* Main Menu Styles */
+        .main-menu {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+
+        .menu-title {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 2px 10px rgba(231, 76, 60, 0.3);
+        }
+
+        .menu-subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 50px;
+            opacity: 0.9;
+        }
+
+        .play-button {
+            padding: 25px 60px;
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            border: none;
+            border-radius: 15px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(231, 76, 60, 0.4);
+            margin-bottom: 40px;
+        }
+
+        .play-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(231, 76, 60, 0.6);
+        }
+
+        .difficulty-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            max-width: 800px;
+            margin-top: 30px;
+        }
+
+        .difficulty-card {
+            background: rgba(44, 62, 80, 0.8);
+            padding: 30px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid;
+            text-align: center;
+        }
+
+        .difficulty-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .difficulty-card.easy {
+            border-color: #27ae60;
+            background: rgba(39, 174, 96, 0.1);
+        }
+
+        .difficulty-card.medium {
+            border-color: #3498db;
+            background: rgba(52, 152, 219, 0.1);
+        }
+
+        .difficulty-card.hard {
+            border-color: #e67e22;
+            background: rgba(230, 126, 34, 0.1);
+        }
+
+        .difficulty-card.impossible {
+            border-color: #c0392b;
+            background: rgba(192, 57, 43, 0.1);
+        }
+
+        .difficulty-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .difficulty-card p {
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        /* Game Container Styles */
+        .game-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(26, 26, 46, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+            display: none;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #c0392b, #e74c3c);
+            padding: 25px;
+            text-align: center;
+            border-bottom: 5px solid #1a1a2e;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-button {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .game-content {
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            gap: 20px;
+            padding: 25px;
+            min-height: 600px;
+        }
+
+        .main-scene {
+            background: #1a1a2e;
+            border-radius: 12px;
+            padding: 25px;
+            position: relative;
+            min-height: 500px;
+        }
+
+        .scene-image {
+            width: 100%;
+            height: 300px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border: 3px solid #7f8c8d;
+        }
+
+        .scene-description {
+            background: #16213e;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-left: 4px solid #e74c3c;
+        }
+
+        .interaction-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .button {
+            padding: 12px;
+            background: #3498db;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .button:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .button.evidence {
+            background: #27ae60;
+        }
+
+        .button.evidence:hover {
+            background: #219a52;
+        }
+
+        .button.suspect {
+            background: #e67e22;
+        }
+
+        .button.suspect:hover {
+            background: #d35400;
+        }
+
+        .sidebar {
+            background: #16213e;
+            border-radius: 12px;
+            padding: 25px;
+        }
+
+        .inventory {
+            margin-bottom: 30px;
+        }
+
+        .inventory h3, .clues h3 {
+            border-bottom: 2px solid #e74c3c;
+            padding-bottom: 12px;
+            margin-bottom: 18px;
+        }
+
+        .inventory-items, .clue-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .inventory-item, .clue-item {
+            background: #1a1a2e;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 3px solid #3498db;
+        }
+
+        .clue-item {
+            border-left-color: #27ae60;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #1a1a2e;
+            padding: 35px;
+            border-radius: 15px;
+            max-width: 650px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 2px solid #e74c3c;
+        }
+
+        .close-modal {
+            float: right;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #e74c3c;
+        }
+
+        .suspect-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+            margin-top: 25px;
+        }
+
+        .suspect-card {
+            background: #16213e;
+            padding: 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #7f8c8d;
+        }
+
+        .suspect-card:hover {
+            border-color: #e74c3c;
+            transform: translateY(-3px);
+        }
+
+        .accusation-section {
+            margin-top: 35px;
+            padding: 25px;
+            background: #16213e;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        select {
+            padding: 12px;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            background: #1a1a2e;
+            color: white;
+            margin: 12px;
+            width: 220px;
+        }
+
+        .accuse-button {
+            background: #c0392b;
+            padding: 18px 35px;
+            font-size: 1.2rem;
+        }
+
+        .accuse-button:hover {
+            background: #e74c3c;
+        }
+
+        .evidence-modal {
+            text-align: center;
+        }
+
+        .evidence-image {
+            width: 100%;
+            height: 220px;
+            background: #16213e;
+            margin: 18px 0;
+            border-radius: 10px;
+            border: 2px solid #7f8c8d;
+        }
+
+        @media (max-width: 768px) {
+            .game-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .interaction-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .suspect-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .difficulty-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .menu-title {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Menu -->
+    <div class="main-menu" id="mainMenu">
+        <h1 class="menu-title">🔍 Murder Mystery</h1>
+        <p class="menu-subtitle">Can you solve these perplexing crimes?</p>
+        
+        <button class="play-button" onclick="showDifficultySelection()">🎮 Play Game</button>
+
+        <div class="difficulty-grid" id="difficultyGrid" style="display: none;">
+            <div class="difficulty-card easy" onclick="startGame('easy')">
+                <h3>🟢 Easy Case</h3>
+                <p>The Stolen Jewel</p>
+                <p>A simple burglary with obvious clues. Perfect for beginners.</p>
+            </div>
+            
+            <div class="difficulty-card medium" onclick="startGame('medium')">
+                <h3>🔵 Medium Case</h3>
+                <p>The Mansion Murder</p>
+                <p>A wealthy philanthropist found dead. Multiple suspects with motives.</p>
+            </div>
+            
+            <div class="difficulty-card hard" onclick="startGame('hard')">
+                <h3>🟠 Hard Case</h3>
+                <p>The Art Gallery Heist</p>
+                <p>A priceless painting stolen. Complex security systems bypassed.</p>
+            </div>
+            
+            <div class="difficulty-card impossible" onclick="startGame('impossible')">
+                <h3>🔴 Impossible Case</h3>
+                <p>The Perfect Crime</p>
+                <p>A locked room mystery. No evidence, no witnesses. Nearly unsolvable.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Container -->
+    <div class="game-container" id="gameContainer">
+        <div class="header">
+            <button class="back-button" onclick="returnToMenu()">← Back to Menu</button>
+            <div>
+                <h1 id="caseTitle">Case Investigation</h1>
+                <div class="subtitle" id="caseSubtitle">Gather evidence and solve the crime</div>
+            </div>
+            <div style="width: 100px;"></div> <!-- Spacer for balance -->
+        </div>
+
+        <div class="game-content">
+            <div class="main-scene">
+                <div class="scene-image" id="sceneImage"></div>
+                <div class="scene-description" id="sceneDescription"></div>
+
+                <div class="interaction-buttons" id="interactionButtons"></div>
+
+                <div class="accusation-section">
+                    <h3>Make Your Accusation</h3>
+                    <select id="suspectSelect">
+                        <option value="">Select Suspect</option>
+                    </select>
+                    <select id="motiveSelect">
+                        <option value="">Select Motive</option>
+                    </select>
+                    <select id="weaponSelect">
+                        <option value="">Select Weapon</option>
+                    </select>
+                    <br>
+                    <button class="button accuse-button" onclick="makeAccusation()">🔎 Make Accusation</button>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <div class="inventory">
+                    <h3>📋 Collected Evidence</h3>
+                    <div class="inventory-items" id="inventoryItems"></div>
+                </div>
+
+                <div class="clues">
+                    <h3>💡 Important Clues</h3>
+                    <div class="clue-list" id="clueList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="evidenceModal" class="modal">
+        <div class="modal-content evidence-modal">
+            <span class="close-modal" onclick="closeModal('evidenceModal')">&times;</span>
+            <h2 id="evidenceTitle">Evidence Found</h2>
+            <div class="evidence-image" id="evidenceImage"></div>
+            <p id="evidenceDescription">You found crucial evidence that might help solve the case.</p>
+        </div>
+    </div>
+
+    <div id="suspectModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('suspectModal')">&times;</span>
+            <h2>Interview Suspects</h2>
+            <div class="suspect-grid" id="suspectGrid"></div>
+        </div>
+    </div>
+
+    <div id="interviewModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('interviewModal')">&times;</span>
+            <h2 id="suspectName">Suspect Interview</h2>
+            <div id="suspectStatement"></div>
+            <div id="suspectClues" style="margin-top: 20px;"></div>
+        </div>
+    </div>
+
+    <div id="resultModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('resultModal')">&times;</span>
+            <h2 id="resultTitle">Investigation Result</h2>
+            <p id="resultMessage"></p>
+            <button class="button" onclick="closeModal('resultModal')" style="margin-top: 20px;">Continue Investigation</button>
+        </div>
+    </div>
+
+    <script>
+        // Game state and cases data
+        const gameCases = {
+            easy: {
+                title: "The Stolen Jewel",
+                subtitle: "Lady Winchester's diamond necklace has been stolen!",
+                sceneImage: "https://placehold.co/800x400/1a1a2e/ecf0f1?text=Opulent+Bedroom+Scene",
+                description: "You're in Lady Winchester's luxurious bedroom. Her priceless diamond necklace was stolen during last night's party. The safe was tampered with, but no forced entry.",
+                evidence: [
+                    { id: 'safe', name: 'Tampered Safe', description: 'The safe shows signs of expert manipulation. No scratches, just precise tool marks.' },
+                    { id: 'window', name: 'Open Window', description: 'The window was left slightly ajar. No footprints outside due to recent rain.' },
+                    { id: 'guestlist', name: 'Party Guest List', description: '25 guests attended. Several have criminal records for theft.' },
+                    { id: 'servant', name: 'Servant Schedule', description: 'The butler was off-duty during the theft. Maid was cleaning downstairs.' }
+                ],
+                suspects: [
+                    { id: 'butler', name: 'Mr. Jenkins, The Butler', alibi: 'I was visiting my sick mother. Hospital records can confirm.', motive: 'I have gambling debts, but I would never steal!' },
+                    { id: 'maid', name: 'Sarah, The Maid', alibi: 'I was cleaning the silverware in the kitchen. The cook saw me.', motive: 'Lady Winchester threatened to fire me last week.' },
+                    { id: 'guest', name: 'Lord Blackwood', alibi: 'I left the party early with a headache. My driver can confirm.', motive: 'I collect rare jewels and have the means to bypass security.' }
+                ],
+                solution: { suspect: 'butler', motive: 'gambling', weapon: 'safecracking' },
+                correctMessage: "Correct! The butler used his knowledge of the safe and created a fake alibi. Hospital records showed he was never there!",
+                wrongMessage: "Not quite. Check the alibis more carefully - someone's story doesn't add up."
+            },
+            medium: {
+                title: "The Mansion Murder",
+                subtitle: "Wealthy philanthropist Mr. Vanderbilt found dead in his study",
+                sceneImage: "https://placehold.co/800x400/1a1a2e/ecf0f1?text=Study+Crime+Scene",
+                description: "Mr. Reginald Vanderbilt was found dead in his study. No forced entry, but the safe was opened. Time of death: 10:00 PM.",
+                evidence: [
+                    { id: 'letter', name: 'Torn Love Letter', description: 'A love letter signed "E" mentioning a secret meeting.' },
+                    { id: 'knife', name: 'Bloody Letter Opener', description: 'Silver letter opener with blood stains, hidden behind books.' },
+                    { id: 'safe', name: 'Open Safe', description: 'Safe opened without force. Financial documents missing.' },
+                    { id: 'window', name: 'Unlocked Window', description: 'Window unlocked from inside. Faint footprints outside.' }
+                ],
+                suspects: [
+                    { id: 'butler', name: 'James, The Butler', alibi: 'Polishing silver in dining room 9:30-11:00 PM.', motive: 'Being fired after financial discrepancies found.' },
+                    { id: 'niece', name: 'Eleanor, The Niece', alibi: 'Studying in room. No witnesses.', motive: 'Main beneficiary in recently changed will.' },
+                    { id: 'partner', name: 'Mr. Chen, Partner', alibi: 'Business meeting ended 9:30 PM. Guards saw leave.', motive: 'Being cut out of million-dollar business deal.' },
+                    { id: 'wife', name: 'Victoria, The Wife', alibi: 'Charity event until midnight. Many witnesses.', motive: 'Knew about husband\'s affair and betrayal.' }
+                ],
+                solution: { suspect: 'niece', motive: 'inheritance', weapon: 'letterOpener' },
+                correctMessage: "Brilliant detective work! Eleanor murdered her uncle for the inheritance and planted the love letter to frame the wife.",
+                wrongMessage: "Incorrect accusation. Re-examine the evidence - the security footage timing doesn't match one alibi."
+            },
+            hard: {
+                title: "The Art Gallery Heist",
+                subtitle: "Priceless Van Gogh painting stolen from secured gallery",
+                sceneImage: "https://placehold.co/800x400/1a1a2e/ecf0f1?text=Art+Gallery+Heist",
+                description: "The 'Starry Night' replica was stolen overnight. Laser security, motion sensors, and guards were all bypassed. No alarms triggered.",
+                evidence: [
+                    { id: 'security', name: 'Security Logs', description: 'System shows a 2-minute power blink at 2:17 AM. No other anomalies.' },
+                    { id: 'frame', name: 'Empty Frame', description: 'Precision cutting. No fingerprints. Professional tools used.' },
+                    { id: 'window', name: 'Roof Access', description: 'Skylight was tampered with. Expert climbing gear marks.' },
+                    { id: 'blueprint', name: 'Gallery Blueprints', description: 'Only architects and senior staff had access to these plans.' }
+                ],
+                suspects: [
+                    { id: 'curator', name: 'Dr. Evans, Curator', alibi: 'Working late on exhibition catalog. Security cameras show me.', motive: 'Massive personal debt and gambling addiction.' },
+                    { id: 'guard', name: 'Security Chief Miller', alibi: 'Doing rounds all night. Team can verify.', motive: 'Recently denied promotion and raise.' },
+                    { id: 'intern', name: 'Emma, Art Intern', alibi: 'At home with roommates. They were sleeping.', motive: 'Art student with expertise in security systems.' },
+                    { id: 'donor', name: 'Mr. Romano, Donor', alibi: 'Business trip in another city. Flight records.', motive: 'Known art collector with questionable connections.' }
+                ],
+                solution: { suspect: 'curator', motive: 'debt', weapon: 'insidejob' },
+                correctMessage: "Excellent! Dr. Evans used his knowledge of the security system and caused the power blink to disable alarms temporarily.",
+                wrongMessage: "Not quite right. The power blink was an inside job - check who had access to the electrical systems."
+            },
+            impossible: {
+                title: "The Perfect Crime",
+                subtitle: "Billionaire found dead in locked panic room. No entry, no exit.",
+                sceneImage: "https://placehold.co/800x400/1a1a2e/ecf0f1?text=Locked+Room+Mystery",
+                description: "Mr. Blackwood found dead in his impenetrable panic room. Door locked from inside, no windows, air vents too small. Poison detected.",
+                evidence: [
+                    { id: 'room', name: 'Locked Room', description: 'Steel door, biometric lock. No tampering. Locked from inside.' },
+                    { id: 'poison', name: 'Rare Poison', description: 'Amazonian frog toxin. Takes 30 minutes to act. No container found.' },
+                    { id: 'schedule', name: 'Victim Schedule', description: 'Met with 3 people before entering room alone.' },
+                    { id: 'vent', name: 'Air Vent', description: '4-inch diameter. Too small for any object or poison delivery.' }
+                ],
+                suspects: [
+                    { id: 'wife', name: 'Mrs. Blackwood', alibi: 'At charity gala. Hundreds of witnesses.', motive: 'Unhappy marriage. Stands to inherit billions.' },
+                    { id: 'son', name: 'Alexander, Son', alibi: 'Working late at office. Security logs show entry/exit.', motive: 'Cut off from family money. Hated father.' },
+                    { id: 'assistant', name: 'Mr. Lee, Assistant', alibi: 'Preparing documents in adjacent office.', motive: 'Knew all business secrets. Being replaced.' },
+                    { id: 'doctor', name: 'Dr. Patel', alibi: 'At hospital. Medical emergency records.', motive: 'Prescribed medication that interacted badly with poison.' }
+                ],
+                solution: { suspect: 'assistant', motive: 'replacement', weapon: 'timedpoison' },
+                correctMessage: "ASTOUNDING! You solved the impossible! Mr. Lee poisoned the coffee earlier, knowing it would take effect after Mr. Blackwood locked himself in.",
+                wrongMessage: "This case is nearly impossible! The poison was administered before he entered the room - think about timing and access."
+            }
+        };
+
+        let currentCase = null;
+        let gameState = {
+            evidence: {},
+            interviews: {},
+            difficulty: null
+        };
+
+        function showDifficultySelection() {
+            document.getElementById('difficultyGrid').style.display = 'grid';
+            document.querySelector('.play-button').style.display = 'none';
+        }
+
+        function startGame(difficulty) {
+            currentCase = gameCases[difficulty];
+            gameState.difficulty = difficulty;
+            gameState.evidence = {};
+            gameState.interviews = {};
+            
+            // Initialize game UI
+            document.getElementById('mainMenu').style.display = 'none';
+            document.getElementById('gameContainer').style.display = 'block';
+            document.getElementById('caseTitle').textContent = currentCase.title;
+            document.getElementById('caseSubtitle').textContent = currentCase.subtitle;
+            document.getElementById('sceneImage').style.background = `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), ${currentCase.sceneImage}`;
+            document.getElementById('sceneDescription').innerHTML = `<h2>Crime Scene</h2><p>${currentCase.description}</p>`;
+            
+            // Setup interaction buttons
+            const buttonsContainer = document.getElementById('interactionButtons');
+            buttonsContainer.innerHTML = '';
+            
+            currentCase.evidence.forEach(evidence => {
+                const button = document.createElement('button');
+                button.className = 'button evidence';
+                button.textContent = `Examine ${evidence.name}`;
+                button.onclick = () => showEvidence(evidence.id);
+                buttonsContainer.appendChild(button);
+            });
+            
+            const suspectButton = document.createElement('button');
+            suspectButton.className = 'button suspect';
+            suspectButton.textContent = 'Interview Suspects';
+            suspectButton.onclick = showSuspects;
+            buttonsContainer.appendChild(suspectButton);
+            
+            // Setup accusation dropdowns
+            setupAccusationDropdowns();
+            
+            // Clear inventory and clues
+            document.getElementById('inventoryItems').innerHTML = '';
+            document.getElementById('clueList').innerHTML = '<div class="clue-item">No clues collected yet</div>';
+        }
+
+        function setupAccusationDropdowns() {
+            const suspectSelect = document.getElementById('suspectSelect');
+            const motiveSelect = document.getElementById('motiveSelect');
+            const weaponSelect = document.getElementById('weaponSelect');
+            
+            // Clear existing options
+            suspectSelect.innerHTML = '<option value="">Select Suspect</option>';
+            motiveSelect.innerHTML = '<option value="">Select Motive</option>';
+            weaponSelect.innerHTML = '<option value="">Select Weapon</option>';
+            
+            // Add suspects
+            currentCase.suspects.forEach(suspect => {
+                const option = document.createElement('option');
+                option.value = suspect.id;
+                option.textContent = suspect.name;
+                suspectSelect.appendChild(option);
+            });
+            
+            // Add motives and weapons based on difficulty
+            const motives = ['gambling', 'inheritance', 'revenge', 'debt', 'replacement'];
+            const weapons = ['safecracking', 'letterOpener', 'insidejob', 'timedpoison'];
+            
+            motives.forEach(motive => {
+                const option = document.createElement('option');
+                option.value = motive;
+                option.textContent = motive.charAt(0).toUpperCase() + motive.slice(1);
+                motiveSelect.appendChild(option);
+            });
+            
+            weapons.forEach(weapon => {
+                const option = document.createElement('option');
+                option.value = weapon;
+                option.textContent = weapon.charAt(0).toUpperCase() + weapon.slice(1);
+                weaponSelect.appendChild(option);
+            });
+        }
+
+        function showEvidence(evidenceId) {
+            const evidence = currentCase.evidence.find(e => e.id === evidenceId);
+            if (!evidence) return;
+            
+            gameState.evidence[evidenceId] = true;
+            
+            const modal = document.getElementById('evidenceModal');
+            const title = document.getElementById('evidenceTitle');
+            const desc = document.getElementById('evidenceDescription');
+            const image = document.getElementById('evidenceImage');
+            
+            title.textContent = evidence.name;
+            desc.textContent = evidence.description;
+            image.style.background = `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://placehold.co/600x300/16213e/ecf0f1?text=${encodeURIComponent(evidence.name)}')`;
+            
+            // Add to inventory
+            updateInventory();
+            
+            modal.style.display = 'flex';
+        }
+
+        function showSuspects() {
+            const modal = document.getElementById('suspectModal');
+            const grid = document.getElementById('suspectGrid');
+            grid.innerHTML = '';
+            
+            currentCase.suspects.forEach(suspect => {
+                const card = document.createElement('div');
+                card.className = 'suspect-card';
+                card.innerHTML = `
+                    <h3>${suspect.name}</h3>
+                    <p>${suspect.alibi.substring(0, 50)}...</p>
+                `;
+                card.onclick = () => interviewSuspect(suspect.id);
+                grid.appendChild(card);
+            });
+            
+            modal.style.display = 'flex';
+        }
+
+        function interviewSuspect(suspectId) {
+            const suspect = currentCase.suspects.find(s => s.id === suspectId);
+            if (!suspect) return;
+            
+            gameState.interviews[suspectId] = true;
+            const modal = document.getElementById('interviewModal');
+            const name = document.getElementById('suspectName');
+            const statement = document.getElementById('suspectStatement');
+            const clues = document.getElementById('suspectClues');
+            
+            name.textContent = suspect.name;
+            statement.innerHTML = `
+                <p><strong>Alibi:</strong> ${suspect.alibi}</p>
+                <p><strong>Motive:</strong> ${suspect.motive}</p>
+            `;
+            clues.innerHTML = '<div class="clue-item">🔍 Verify this alibi carefully</div>';
+            
+            modal.style.display = 'flex';
+        }
+
+        function makeAccusation() {
+            const suspect = document.getElementById('suspectSelect').value;
+            const motive = document.getElementById('motiveSelect').value;
+            const weapon = document.getElementById('weaponSelect').value;
+            
+            if (!suspect || !motive || !weapon) {
+                showResult("Incomplete Accusation", "Please select suspect, motive, and weapon.");
+                return;
+            }
+            
+            if (suspect === currentCase.solution.suspect && 
+                motive === currentCase.solution.motive && 
+                weapon === currentCase.solution.weapon) {
+                showResult("Case Solved! 🎉", currentCase.correctMessage);
+            } else {
+                showResult("Wrong Accusation", currentCase.wrongMessage);
+            }
+        }
+
+        function showResult(title, message) {
+            document.getElementById('resultTitle').textContent = title;
+            document.getElementById('resultMessage').textContent = message;
+            document.getElementById('resultModal').style.display = 'flex';
+        }
+
+        function updateInventory() {
+            const inventory = document.getElementById('inventoryItems');
+            inventory.innerHTML = '';
+            
+            Object.keys(gameState.evidence).forEach(evidenceId => {
+                const evidence = currentCase.evidence.find(e => e.id === evidenceId);
+                if (evidence) {
+                    const item = document.createElement('div');
+                    item.className = 'inventory-item';
+                    item.textContent = evidence.name;
+                    inventory.appendChild(item);
+                }
+            });
+            
+            if (inventory.children.length === 0) {
+                inventory.innerHTML = '<div class="inventory-item">No evidence collected yet</div>';
+            }
+        }
+
+        function returnToMenu() {
+            document.getElementById('gameContainer').style.display = 'none';
+            document.getElementById('mainMenu').style.display = 'flex';
+            document.getElementById('difficultyGrid').style.display = 'none';
+            document.querySelector('.play-button').style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modals = document.getElementsByClassName('modal');
+            for (let modal of modals) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
+
